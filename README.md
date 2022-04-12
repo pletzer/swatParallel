@@ -8,6 +8,13 @@ You'll need:
  2. R with [SWATPlusR](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html)
 
 
+### On Mahuika
+
+```
+ml Miniconda3 R
+pip install defopt --user
+```
+
 ## Key commands
 
 ### Create an experiment
