@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+import defopt
+from pathlib import Path
+
+def prep(config: Path):
+    """
+    Prepare
+    :param config: configuration file
+    """
+    pass
+
+
+def run(config: Path, nprocs: int=1):
+    """
+    Run
+    :param config: configuration file
+    :param nprocs: number of processes
+    """
+    pass
+
+
+def analyse(config: Path):
+    """
+    Ananlyse the results
+    :param config: configuration file
+    """
+    pass
+
+
+if __name__ == '__main__':
+    defopt.run([prep, run, analyse])
