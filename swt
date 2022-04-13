@@ -19,12 +19,24 @@ def prep(*, config: Path):
         raise RuntimeError("need to have a project directory")
     if not os.path.isdir(meta["project_dir"]):
         raise RuntimeError(f"file {meta['project_dir']} is not a directory")
-    if not "output_dir" in meta:
-        raise RuntimeError("need to have an output directory")
+    if not "run_dir" in meta:
+        raise RuntimeError("need to have a run directory")
 
     # create the output directory
-    p = Path(meta['output_dir'])
+    p = Path(meta['run_dir'])
     p.mkdir(parents=True, exist_ok=True)
+
+    # create R script
+    r_script = f"""
+library(SWATplusR)
+library(dplyr)
+
+project_dir <- {meta['project_dir']}
+n <- {meta['sim']['n']}
+n_threads <- {meta['sim']['n_thread']}
+set.seed({meta['sim']['seed']})
+    """
+    
 
 
 def run(*, config: Path, nprocs: int=1):
