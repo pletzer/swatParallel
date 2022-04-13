@@ -1,5 +1,5 @@
 # swatParallel
-A collection of scripts to run parameter scans of SWAT models
+A collection of scripts to run parameter scans of SWAT modelss
 
 ## Prerequisites
 
@@ -33,6 +33,9 @@ swt run -c <exp.cfg> -N <num procs>
 ```
 swt analyse -c <exp.cfg>
 ```
+
+## Configuration file
+
 
 
 ## Example

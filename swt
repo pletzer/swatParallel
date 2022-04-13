@@ -1,13 +1,30 @@
 #!/usr/bin/env python
 import defopt
 from pathlib import Path
+import json
+import os.path
+
 
 def prep(config: Path):
     """
     Prepare
     :param config: configuration file
     """
-    pass
+    # read the config file
+    with config.open('r') as f:
+        meta = json.load(f)
+
+    # runs some checks
+    if not "project_dir" in meta:
+        raise RuntimeError("need to have a project directory")
+    if not os.path.isdir(meta["project_dir"]):
+        raise RuntimeError(f"file {meta['project_dir']} is not a directory")
+    if not "output_dir" in meta:
+        raise RuntimeError("need to have an output directory")
+
+    # create the output directory
+    p = Path(meta['output_dir'])
+    p.mkdir(parents=True)
 
 
 def run(config: Path, nprocs: int=1):
@@ -16,12 +33,19 @@ def run(config: Path, nprocs: int=1):
     :param config: configuration file
     :param nprocs: number of processes
     """
-    pass
+    # read the config file
+    with config.open('r') as f:
+        meta = json.load(f)
+
+    # create the SWATPlusR scripts
+
+    # create the SLURM scripts
+
 
 
 def analyse(config: Path):
     """
-    Ananlyse the results
+    Analyse the results
     :param config: configuration file
     """
     pass
