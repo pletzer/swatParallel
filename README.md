@@ -9,7 +9,9 @@ You'll need:
  2. R with [SWATPlusR](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html)
 
 
-To build SWAT (on Unix/Linux/Mac OSX)
+### Building SWAT 
+
+On Unix/Linux/Mac OSX:
 ```
 git clone https://github.com/WatershedModels/SWAT.git
 cd SWAT
@@ -30,28 +32,28 @@ cmake --build .
 ```
 
 On Windows, the following should work (not tested)
-
 ```
 cd SWAT
 mkdir build
 cd build
 FC=ifx cmake -G "NMake Makefiles" ..
-cmake --build . 
+cmake --build .
 ```
 
-### On Mahuika
+### Installing SWATPlusR
 
-```
-ml Miniconda3 R
-pip install defopt --user
+In R:
+```R
+install.packages('remotes')
+remotes::install_github('chrisschuerz/SWATplusR')
 ```
 
 ## Key commands
 
-### Create an experiment
+### Prepare an experiment
 
 ```
-swt create -c  <exp.cfg>
+swt prep -c  <exp.cfg>
 ```
 
 ### Run the experiment

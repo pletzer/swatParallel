@@ -3,6 +3,21 @@ import defopt
 from pathlib import Path
 import json
 import os.path
+import shutil
+import subprocess
+
+
+def clean(*, config: Path):
+    """
+    Clean the experiment
+    :param config: JSON configuration file
+    """
+    # read the config file
+    with config.open('r') as f:
+        meta = json.load(f)
+
+    shutil.rmtree(Path(meta['run_dir']))
+
 
 
 def prep(*, config: Path):
@@ -22,16 +37,14 @@ def prep(*, config: Path):
     if not "run_dir" in meta:
         raise RuntimeError("need to have a run directory")
 
-    # create the output directory
-    p = Path(meta['run_dir'])
-    p.mkdir(parents=True, exist_ok=True)
+    # copy the files to the run directory
+    shutil.copytree(meta['project_dir'], meta['run_dir'])
 
     # create R script
     r_script = f"""
 library(SWATplusR)
 library(dplyr)
 
-project_dir <- 
 n <- {meta['sim']['n']}
 n_threads <- {meta['sim']['n_thread']}
 set.seed({meta['sim']['seed']})
@@ -55,8 +68,8 @@ sim <- run_swat2012(project_path = \'{meta['project_dir']}\',
 
 save(sim, file = \'{meta['run_dir']}/result.RData\')
 """
-    print(r_script)
-    
+    with open(Path(meta['run_dir']) / Path('run.R'), 'w') as f:
+        f.write(r_script)
 
 
 def run(*, config: Path, nprocs: int=1):
@@ -69,9 +82,13 @@ def run(*, config: Path, nprocs: int=1):
     with config.open('r') as f:
         meta = json.load(f)
 
-    # create the SWATPlusR scripts
+    # SWAT executable is expected in the run directory, create a symbolic link
+    Path(meta['run_dir'] / Path('swat')).symlink_to(meta['swat_exec'])
 
-    # create the SLURM scripts
+    # run
+    exe = Path(meta['run_dir']) / Path('run.R')
+    cmd = f"RScript {exe}"
+    subprocess.run(cmd)
 
 
 
@@ -84,4 +101,4 @@ def analyse(*, config: Path):
 
 
 if __name__ == '__main__':
-    defopt.run([prep, run, analyse])
+    defopt.run([clean, prep, run, analyse])
