@@ -5,10 +5,10 @@ import json
 import os.path
 
 
-def prep(config: Path):
+def prep(*, config: Path):
     """
     Prepare
-    :param config: configuration file
+    :param config: JSON configuration file
     """
     # read the config file
     with config.open('r') as f:
@@ -24,10 +24,10 @@ def prep(config: Path):
 
     # create the output directory
     p = Path(meta['output_dir'])
-    p.mkdir(parents=True)
+    p.mkdir(parents=True, exist_ok=True)
 
 
-def run(config: Path, nprocs: int=1):
+def run(*, config: Path, nprocs: int=1):
     """
     Run
     :param config: configuration file
@@ -43,7 +43,7 @@ def run(config: Path, nprocs: int=1):
 
 
 
-def analyse(config: Path):
+def analyse(*, config: Path):
     """
     Analyse the results
     :param config: configuration file
