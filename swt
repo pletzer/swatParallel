@@ -46,7 +46,7 @@ library(SWATplusR)
 library(dplyr)
 
 n <- {meta['sim']['n']}
-n_threads <- {meta['sim']['n_thread']}
+n_thread <- {meta['sim']['n_thread']}
 set.seed({meta['sim']['seed']})
 param <- tibble("""
     nvar = len(meta['sim']['var'])
@@ -61,10 +61,10 @@ param <- tibble("""
     r_script += ')\n'
     r_script += f"""
 sim <- run_swat2012(project_path = \'{meta['project_dir']}\',
-                    output = list(q=dfine_output(file = \'rch\',
+                    output = list(q=define_output(file = \'rch\',
                               variable = 'FLOW_OUT', unit=1:3)),
-                              parameter = param,
-                              n_thread = n_thread)
+                    parameter = param,
+                    n_thread = n_thread)
 
 save(sim, file = \'{meta['run_dir']}/result.RData\')
 """
