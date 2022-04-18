@@ -10,7 +10,7 @@ import stat
 
 def remove_executables_in_dir(directory):
     executable = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
-    for filename in os.listdir('.'):
+    for filename in os.listdir(directory):
         if os.path.isfile(filename):
             st = os.stat(filename)
             mode = st.st_mode
