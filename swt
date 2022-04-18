@@ -1,0 +1,118 @@
+#!/usr/bin/env python
+import defopt
+from pathlib import Path
+import json
+import os
+import shutil
+import subprocess
+import stat
+
+
+def remove_executables_in_dir(directory):
+    executable = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
+    for filename in os.listdir('.'):
+        if os.path.isfile(filename):
+            st = os.stat(filename)
+            mode = st.st_mode
+            if mode & executable:
+                os.remove(filename)    
+
+
+def clean(*, config: Path):
+    """
+    Clean the experiment
+    :param config: JSON configuration file
+    """
+    # read the config file
+    with config.open('r') as f:
+        meta = json.load(f)
+
+    shutil.rmtree(Path(meta['run_dir']))
+
+
+
+def prep(*, config: Path):
+    """
+    Prepare
+    :param config: JSON configuration file
+    """
+    # read the config file
+    with config.open('r') as f:
+        meta = json.load(f)
+
+    # runs some checks
+    if not "project_dir" in meta:
+        raise RuntimeError("need to have a project directory")
+    if not os.path.isdir(meta["project_dir"]):
+        raise RuntimeError(f"file {meta['project_dir']} is not a directory")
+    if not "run_dir" in meta:
+        raise RuntimeError("need to have a run directory")
+
+    # copy the files to the run directory
+    shutil.copytree(meta['project_dir'], meta['run_dir'])
+
+    # create R script
+    r_script = f"""
+library(SWATplusR)
+library(dplyr)
+
+set.seed({meta['sim']['seed']})
+
+n <- {meta['sim']['n']}
+param <- tibble("""
+    nvar = len(meta['sim']['var'])
+    count = 0
+    for var, elem in meta['sim']['var'].items():
+        chg = elem['change']
+        val = elem['val']
+        r_script += f"""\'{var} | change = {chg}\' = {val}"""
+        if count < nvar - 1:
+            r_script += ', '
+        count += 1
+    r_script += ')\n'
+    r_script += f"""
+res <- run_swat2012(project_path = \'{meta['project_dir']}\',
+                    output = list(q=define_output(file = \'rch\',
+                              variable = 'FLOW_OUT', unit=1:3)),
+                    parameter = param,
+                    n_thread = {meta['sim']['n_thread']})
+
+save(res, file = \'{meta['run_dir']}/result.RData\')
+"""
+    with open(Path(meta['run_dir']) / Path('run.R'), 'w') as f:
+        f.write(r_script)
+
+
+def run(*, config: Path, nprocs: int=1):
+    """
+    Run
+    :param config: configuration file
+    :param nprocs: number of processes
+    """
+    # read the config file
+    with config.open('r') as f:
+        meta = json.load(f)
+
+
+    # remove any executable file 
+    remove_executables_in_dir(meta['run_dir'])
+
+    # copy the executable over to the run directory
+    shutil.copy(meta['swat_exec'], Path(meta['run_dir']) / Path('swat'))
+
+    # run
+    exe = Path(meta['run_dir']) / Path('run.R')
+    subprocess.run(["Rscript", exe])
+
+
+
+def analyse(*, config: Path):
+    """
+    Analyse the results
+    :param config: configuration file
+    """
+    pass
+
+
+if __name__ == '__main__':
+    defopt.run([clean, prep, run, analyse])
