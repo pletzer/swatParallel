@@ -59,7 +59,7 @@ swt prep -c  <exp.cfg>
 ### Run the experiment
 
 ```
-swt run -c <exp.cfg> -N <num procs>
+swt run -c <exp.cfg>
 ```
 
 ### Analyse the experiment
