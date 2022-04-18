@@ -4,16 +4,16 @@
 	"swat_exec": "/Users/pletzera/swat/SWAT/build/src/swat2012.682.gfort.rel",
 	"sim": {
 		    "n": 3,
-		    "n_thread": 2,
+		    "n_thread": 3,
 		    "seed": 123,
 		    "var": {
 		    		"cn2.hru": {
 		    					"change": "abschg",
 		    					"val": "runif(n,-15,10)"
 		    					},
-		    		"lat_ttime.hru": {
+		    		"alpha_bf.gw": {
 		    					"change": "absval",
-		    					"val": "runif(n,0.5,5)"
+		    					"val": "runif(n,0,1)"
 		    					}
 		    		}
 		    }

@@ -71,7 +71,7 @@ param <- tibble("""
         count += 1
     r_script += ')\n'
     r_script += f"""
-res <- run_swat2012(project_path = \'{meta['project_dir']}\',
+res <- run_swat2012(project_path = \'{meta['run_dir']}\',
                     output = list(q=define_output(file = \'rch\',
                               variable = 'FLOW_OUT', unit=1:3)),
                     parameter = param,

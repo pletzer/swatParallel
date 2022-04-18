@@ -45,7 +45,7 @@ cmake --build .
 In R:
 ```R
 install.packages('remotes')
-remotes::install_github('chrisschuerz/SWATplusR')
+remotes::install_github('chrisschuerzls/SWATplusR')
 ```
 
 ## Key commands
