@@ -1,5 +1,5 @@
 # swatParallel
-A collection of scripts to run parameter scans of SWAT modelss
+A collection of scripts to run SWAT model parameter scans
 
 ## Prerequisites
 
