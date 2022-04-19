@@ -1,12 +1,12 @@
 # swatParallel
-A collection of scripts to run parameter scans of SWAT modelss
+A collection of scripts to run SWAT model parameter scans
 
 ## Prerequisites
 
 You'll need:
  1. CMake
  1. [SWAT](https://github.com/WatershedModels/SWAT.git)
- 2. R with [SWATPlusR](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html)
+ 2. R with [SWATplusR](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html)
 
 
 ### Building SWAT 
