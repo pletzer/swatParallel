@@ -51,36 +51,43 @@ def prep(*, config: Path):
     # copy the files to the run directory
     shutil.copytree(meta['project_dir'], meta['run_dir'])
 
+    n_worker = meta['sim']['n_worker']
+    nvar = len(meta['sim']['var'])
+
     # create R script
-    r_script = f"""
+    r_script_head = f"""
 library(SWATplusR)
 library(dplyr)
-
 set.seed({meta['sim']['seed']})
-
-n <- {meta['sim']['n']}
+n_sample <- {meta['sim']['n_sample']}
 param <- tibble("""
-    nvar = len(meta['sim']['var'])
-    count = 0
+
+    # distribute the tasks
+    r_tasks = [''] * n_worker
+    task_id = 0
     for var, elem in meta['sim']['var'].items():
+        worker_id = (task_id % n_worker)
         chg = elem['change']
         val = elem['val']
-        r_script += f"""\'{var} | change = {chg}\' = {val}"""
-        if count < nvar - 1:
-            r_script += ', '
-        count += 1
-    r_script += ')\n'
-    r_script += f"""
+        if len(r_tasks[worker_id]) != 0:
+            r_tasks[worker_id] += ', '
+        r_tasks[worker_id] += f"""\'{var} | change = {chg}\' = {val}"""
+        task_id += 1
+
+    # finish off
+    for worker_id in range(n_worker):
+        worker_id_str = str(worker_id).zfill(4)
+        r_script = r_script_head + r_tasks[worker_id] + ')\n'
+        r_script += f"""
 res <- run_swat2012(project_path = \'{meta['run_dir']}\',
                     output = list(q=define_output(file = \'rch\',
                               variable = 'FLOW_OUT', unit=1:3)),
                     parameter = param,
-                    n_thread = {meta['sim']['n_thread']})
-
-save(res, file = \'{meta['run_dir']}/result.RData\')
+                    n_thread = {meta['sim']['n_thread_per_worker']})
+save(res, file = \'{meta['run_dir']}/result_{worker_id_str}.RData\')
 """
-    with open(Path(meta['run_dir']) / Path('run.R'), 'w') as f:
-        f.write(r_script)
+        with open(Path(meta['run_dir']) / Path(f'run_{worker_id_str}.R'), 'w') as f:
+            f.write(r_script)
 
 
 def run(*, config: Path, nprocs: int=1):
