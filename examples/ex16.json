@@ -1,10 +1,10 @@
 {
-    "run_dir": "/Users/pletzera/swat/swatParallel/run/ex1",
-    "project_dir": "/Users/pletzera/swat/TxtInOut_Ruataniwha_test",
-    "swat_exec": "/Users/pletzera/swat/SWAT/build/src/swat2012.682.gfort.rel",
+    "run_dir": "/nesi/nobackup/pletzera/swat/swatParallel/run/ex16",
+    "project_dir": "/nesi/nobackup/pletzera/swat/TxtInOut_Ruataniwha_test",
+    "swat_exec": "/nesi/nobackup/pletzera/swat/SWAT/build_intel/src/swat2012.682.ifort.rel",
     "sim": {
         "n_samples": 100,
-        "n_workers": 1,
+        "n_workers": 16,
         "n_threads_per_worker": 1,
         "seed": 123,
         "var": {

@@ -53,18 +53,18 @@ remotes::install_github('chrisschuerz/SWATplusR')
 ### Prepare an experiment
 
 ```
-./swt prep -c  <exp.cfg>
+./swt prep -c <exp.json>
 ```
 
 ### Run the experiment
 
 ```
-./swt run -c <exp.cfg>
+./swt run -c <exp.json>
 ```
 
 ### Analyse the experiment
 ```
-./swt analyse -c <exp.cfg>
+./swt analyse -c <exp.json>
 ```
 
 ## Configuration file
