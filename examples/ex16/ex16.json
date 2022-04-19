@@ -1,11 +1,11 @@
 {
-    "run_dir": "/Users/pletzera/swat/swatParallel/run/ex1",
+    "run_dir": "/Users/pletzera/swat/swatParallel/run/ex16",
     "project_dir": "/Users/pletzera/swat/TxtInOut_Ruataniwha_test",
     "swat_exec": "/Users/pletzera/swat/SWAT/build/src/swat2012.682.gfort.rel",
     "sim": {
         "n_samples": 100,
-        "n_workers": 1,
-        "n_threads_per_worker": 1,
+        "n_workers": 16,
+        "n_threads_per_worker": 8,
         "seed": 123,
         "var": {
             "CN2.mgt": {
