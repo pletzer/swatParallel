@@ -8,6 +8,16 @@ import subprocess
 import stat
 
 
+
+def distribute_samples(n_samples, n_workers):
+    n_local = n_samples // n_workers
+    res = [n_local for i in range(n_workers)]
+    n_remainder = n_samples % n_workers
+    for i in range(n_remainder):
+        res[i] += 1
+    return res
+
+
 def remove_executables_in_dir(directory):
     executable = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
     for filename in os.listdir(directory):
@@ -49,45 +59,40 @@ def prep(*, config: Path):
         raise RuntimeError("need to have a run directory")
 
     n_workers = meta['sim']['n_workers']
-    nvar = len(meta['sim']['var'])
-
-    # create R script
-    r_script_head = f"""
+    n_samples = meta['sim']['n_samples']
+    n_variables = len(meta['sim']['var'])
+    n_local_samples = distribute_samples(n_samples, n_workers)
+    for worker_id in range(n_workers):
+        r_script = f"""
 library(SWATplusR)
 library(dplyr)
-set.seed({meta['sim']['seed']})
-n_samples <- {meta['sim']['n_samples']}
+n_samples <- {n_local_samples[worker_id]}
+set.seed({meta['sim']['seed']} + {worker_id})
 param <- tibble("""
-
-    # distribute the tasks among workers
-    r_tasks = [''] * n_workers
-    task_id = 0
-    for var, elem in meta['sim']['var'].items():
-        worker_id = (task_id % n_workers)
-        chg = elem['change']
-        val = elem['val']
-        if len(r_tasks[worker_id]) != 0:
-            # insert comma
-            r_tasks[worker_id] += ',\n\t'
-        r_tasks[worker_id] += f"""\'{var} | change = {chg}\' = {val}"""
-        task_id += 1
-
-    # finish off
-    for worker_id in range(n_workers):
-
-        worker_id_str = str(worker_id).zfill(4)
-
-        worker_run_path = Path(meta['run_dir']) / Path(f'worker_{worker_id_str}')
+        var_id = 0
+        for var, elem in meta['sim']['var'].items():
+            chg = elem['change']
+            val = elem['val']
+            if var_id > 0:
+                # insert comma
+                r_script += ',\n\t'
+            r_script += f"""\'{var} | change = {chg}\' = {val}"""
+            if var_id == n_variables - 1:
+                r_script += ")"
+            var_id += 1
 
         # copy the files to the worker run directory
+        worker_id_str = str(worker_id).zfill(4)
+        worker_run_path = Path(meta['run_dir']) / Path(f'worker_{worker_id_str}')
         shutil.copytree(meta['project_dir'], worker_run_path)
 
+        var_name, var_file = meta['sim']['output']['var'].split('.')
+        units = meta['sim']['output']['units']
 
-        r_script = r_script_head + r_tasks[worker_id] + ')\n'
         r_script += f"""
-res <- run_swat2012(project_path = \'{meta['run_dir']}\',
-                    output = list(q=define_output(file = \'rch\',
-                              variable = 'FLOW_OUT', unit=1:3)),
+res <- run_swat2012(project_path = \'{worker_run_path}\',
+                    output = list(q=define_output(file = \'{var_file}\',
+                              variable = \'{var_name}\', unit={units})),
                     parameter = param,
                     n_thread = {meta['sim']['n_threads_per_worker']})
 save(res, file = \'{worker_run_path}/result.RData\')

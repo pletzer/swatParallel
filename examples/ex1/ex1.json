@@ -3,23 +3,23 @@
     "project_dir": "/Users/pletzera/swat/TxtInOut_Ruataniwha_test",
     "swat_exec": "/Users/pletzera/swat/SWAT/build/src/swat2012.682.gfort.rel",
     "sim": {
-            "n_samples": 4,
-            "n_workers": 2,
-            "n_threads_per_worker": 1,
-            "seed": 123,
-            "var": {
-                    "cn2.hru": {
-                        "change": "abschg",
-                        "val": "runif(n_samples,-15,10)"
-                        },
-                    "lat_ttime.hru": {
-                        "change": "absval",
-                        "val": "runif(n_samples, 0.5, 5)"
-                        },
-                    "alpha_bf.gw": {
-                        "change": "absval",
-                        "val": "runif(n_samples,0,1)"
-                        }
-                    }
+        "n_samples": 4,
+        "n_workers": 2,
+        "n_threads_per_worker": 1,
+        "seed": 123,
+        "var": {
+            "CN2.mgt": {
+                "change": "abschg",
+                "val": "runif(n_samples,-15,10)"
+            },
+            "ALPHA_BF.gw": {
+                "change": "absval",
+                "val": "runif(n_samples, 0., 1.)"
             }
+        },
+        "output": {
+            "var" : "FLOW_OUT.rch",
+            "units": "1:3"
+        }
+    }
 }
