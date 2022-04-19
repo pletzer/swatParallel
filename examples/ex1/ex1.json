@@ -1,21 +1,25 @@
 {
-	"run_dir": "/Users/pletzera/swat/swatParallel/run/ex1",
-	"project_dir": "/Users/pletzera/swat/TxtInOut_Ruataniwha_test",
-	"swat_exec": "/Users/pletzera/swat/SWAT/build/src/swat2012.682.gfort.rel",
-	"sim": {
-		    "n_sample": 4,
-		    "n_worker": 2,
-		    "n_thread_per_worker": 3,
-		    "seed": 123,
-		    "var": {
-		    		"cn2.hru": {
-		    					"change": "abschg",
-		    					"val": "runif(n_sample,-15,10)"
-		    					},
-		    		"alpha_bf.gw": {
-		    					"change": "absval",
-		    					"val": "runif(n_smaple,0,1)"
-		    					}
-		    		}
-		    }
+    "run_dir": "/Users/pletzera/swat/swatParallel/run/ex1",
+    "project_dir": "/Users/pletzera/swat/TxtInOut_Ruataniwha_test",
+    "swat_exec": "/Users/pletzera/swat/SWAT/build/src/swat2012.682.gfort.rel",
+    "sim": {
+            "n_samples": 4,
+            "n_workers": 2,
+            "n_threads_per_worker": 1,
+            "seed": 123,
+            "var": {
+                    "cn2.hru": {
+                        "change": "abschg",
+                        "val": "runif(n_samples,-15,10)"
+                        },
+                    "lat_ttime.hru": {
+                        "change": "absval",
+                        "val": "runif(n_samples, 0.5, 5)"
+                        },
+                    "alpha_bf.gw": {
+                        "change": "absval",
+                        "val": "runif(n_samples,0,1)"
+                        }
+                    }
+            }
 }
