@@ -5,7 +5,7 @@
     "sim": {
         "n_samples": 100,
         "n_workers": 16,
-        "n_threads_per_worker": 1,
+        "n_threads_per_worker": 8,
         "seed": 123,
         "var": {
             "CN2.mgt": {
