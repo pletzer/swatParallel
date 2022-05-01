@@ -6,17 +6,7 @@
         "n_samples": 10,
         "n_workers": 1,
         "n_threads_per_worker": 8,
-        "seed": 123,
-        "var": {
-            "CN2.mgt": {
-                "change": "abschg",
-                "val": "runif(n_samples,-15,10)"
-            },
-            "ALPHA_BF.gw": {
-                "change": "absval",
-                "val": "runif(n_samples, 0., 1.)"
-            }
-        },
+        "input": "ex1.rds",
         "output": {
             "var" : "FLOW_OUT.rch",
             "units": "1:3"
