@@ -84,28 +84,28 @@ param <- tibble("""
         # copy the files to the worker run directory
         worker_id_str = str(worker_id).zfill(4)
         worker_run_path = Path(meta['run_dir']) / Path(f'worker_{worker_id_str}')
+        print(f"...copying data from {meta['project_dir']} to {worker_run_path}")
         shutil.copytree(meta['project_dir'], worker_run_path)
 
         var_name, var_file = meta['sim']['output']['var'].split('.')
         units = meta['sim']['output']['units']
 
         r_script += f"""
-res <- run_swat2012(project_path = \'{worker_run_path}\',
+res <- run_swat2012(project_path = \'./\',
                     output = list(q=define_output(file = \'{var_file}\',
                               variable = \'{var_name}\', unit={units})),
                     parameter = param,
                     n_thread = {meta['sim']['n_threads_per_worker']})
-save(res, file = \'{worker_run_path}/result.RData\')
+save(res, file = \'./result.RData\')
 """
         with open(worker_run_path / Path(f'run.R'), 'w') as f:
             f.write(r_script)
 
 
-def run(*, config: Path, nprocs: int=1):
+def run(*, config: Path):
     """
     Run
     :param config: configuration file
-    :param nprocs: number of processes
     """
     # read the config file
     with config.open('r') as f:
