@@ -96,7 +96,7 @@ res <- run_swat2012(project_path = \'./\',
                               variable = \'{var_name}\', unit={units})),
                     parameter = param,
                     n_thread = {meta['sim']['n_threads_per_worker']})
-save(res, file = \'./result.RData\')
+saveRDS(res, file = \'./result.rds\')
 """
         with open(worker_run_path / Path(f'run.R'), 'w') as f:
             f.write(r_script)
@@ -112,16 +112,46 @@ def run(*, config: Path):
         meta = json.load(f)
 
 
-    # remove any executable file 
+    # remove any executable file
+    print(f"removing execs")
     remove_executables_in_dir(meta['run_dir'])
+    print(f"done")
 
     # copy the executable over to the run directory
+    print(f"copying swat exec")
     shutil.copy(meta['swat_exec'], Path(meta['run_dir']) / Path('swat'))
+    print(f"done")
 
-    # run
-    exe = Path(meta['run_dir']) / Path('run.R')
-    subprocess.run(["Rscript", exe])
+    # create slurm job
+    nworkers = meta['sim']['n_workers']
+    nthreads = meta['sim']['n_threads_per_worker']
+    act = meta['scheduler']['slurm']['account']
+    tim = meta['scheduler']['slurm']['time']
+    mem = meta['scheduler']['slurm']['mem']
+    slurm_script = f"""#!/bin/bash -e
+#SBATCH --job-name=swt-{nworkers}w-{nthreads}t
+#SBATCH --account={act}       
+#SBATCH --time={tim}
+#SBATCH --mem={mem}
+#SBATCH --array=0-{nworkers - 1}
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task={nthreads}
+#SBATCH --hint=nomultithread
 
+# on mahuika, need these modules
+ml Python R intel
+
+# prepending the worker_id with zeros
+worker_id=$(python -c "import sys; n = sys.argv[1]; print(n.zfill(4))" ${{SLURM_ARRAY_TASK_ID}})
+
+cd worker_${{worker_id}}
+Rscript run.R
+"""
+    fname = meta['run_dir'] / Path(f'run.sl')
+    with open(fname, 'w') as f:
+            f.write(slurm_script)
+
+    print(f"You will need to submit SLURM script {fname}")
 
 
 def analyse(*, config: Path):

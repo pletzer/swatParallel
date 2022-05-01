@@ -1,9 +1,9 @@
 {
-    "run_dir": "/nesi/nobackup/pletzera/swat/swatParallel/run/ex1",
-    "project_dir": "/nesi/nobackup/pletzera/swat/TxtInOut_Ruataniwha_test",
-    "swat_exec": "/nesi/nobackup/pletzera/swat/SWAT/build_intel/src/swat2012.682.ifort.rel",
+    "run_dir": "./run/ex1",
+    "project_dir": "../TxtInOut_Ruataniwha_test",
+    "swat_exec": "../SWAT/build/src/swat2012.682.gfort.rel",
     "sim": {
-        "n_samples": 100,
+        "n_samples": 10,
         "n_workers": 1,
         "n_threads_per_worker": 8,
         "seed": 123,
@@ -20,6 +20,13 @@
         "output": {
             "var" : "FLOW_OUT.rch",
             "units": "1:3"
+        }
+    },
+    "scheduler": {
+        "slurm": {
+            "account": "nesi99999",
+            "mem": "500MB",
+            "time": "01:00:00"
         }
     }
 }
