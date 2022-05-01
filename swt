@@ -5,7 +5,7 @@ import json
 import os
 import shutil
 import subprocess
-import stat
+import itertools 
 
 
 
@@ -60,42 +60,48 @@ def prep(*, config: Path):
 
     n_workers = meta['sim']['n_workers']
     n_samples = meta['sim']['n_samples']
-    n_variables = len(meta['sim']['var'])
-    n_local_samples = distribute_samples(n_samples, n_workers)
-    for worker_id in range(n_workers):
-        r_script = f"""
-library(SWATplusR)
-library(dplyr)
-n_samples <- {n_local_samples[worker_id]}
-set.seed({meta['sim']['seed']} + {worker_id})
-param <- tibble("""
-        var_id = 0
-        for var, elem in meta['sim']['var'].items():
-            chg = elem['change']
-            val = elem['val']
-            if var_id > 0:
-                # insert comma
-                r_script += ',\n\t'
-            r_script += f"""\'{var} | change = {chg}\' = {val}"""
-            if var_id == n_variables - 1:
-                r_script += ")"
-            var_id += 1
 
-        # copy the files to the worker run directory
+    var_name, var_file = meta['sim']['output']['var'].split('.')
+    units = meta['sim']['output']['units']
+
+    n_local_samples = distribute_samples(n_samples, n_workers)
+    indx_end_local = [e for e in itertools.accumulate(n_local_samples)]
+    indx_beg_local = [indx_end_local[i] - n_local_samples[i] for i in range(len(n_local_samples))]
+
+    for worker_id in range(n_workers):
+
         worker_id_str = str(worker_id).zfill(4)
         worker_run_path = Path(meta['run_dir']) / Path(f'worker_{worker_id_str}')
+
+        # copy the SWAT files to the worker run directory
         print(f"...copying data from {meta['project_dir']} to {worker_run_path}")
         shutil.copytree(meta['project_dir'], worker_run_path)
 
-        var_name, var_file = meta['sim']['output']['var'].split('.')
-        units = meta['sim']['output']['units']
+        # copy the param input file
+        input_rds = worker_run_path / Path('input.rds')
+        shutil.copyfile(meta['sim']['input'], input_rds) 
 
-        r_script += f"""
+        # build the script
+        r_script = f"""
+library(SWATplusR)
+library(dplyr)
+
+# start row
+ibeg <- {indx_beg_local[worker_id] + 1}
+# end row
+iend <- {indx_end_local[worker_id]}
+
+# get the params for this worker
+param <- readRDS('input.rds')[ibeg:iend,]
+
+# run the parameter scan
 res <- run_swat2012(project_path = \'./\',
                     output = list(q=define_output(file = \'{var_file}\',
                               variable = \'{var_name}\', unit={units})),
                     parameter = param,
                     n_thread = {meta['sim']['n_threads_per_worker']})
+
+# save the results
 saveRDS(res, file = \'./result.rds\')
 """
         with open(worker_run_path / Path(f'run.R'), 'w') as f:

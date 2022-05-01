@@ -6,7 +6,7 @@
         "n_samples": 10,
         "n_workers": 1,
         "n_threads_per_worker": 8,
-        "input": "ex1.rds",
+        "input": "examples/ex1/ex1.rds",
         "output": {
             "var" : "FLOW_OUT.rch",
             "units": "1:3"
