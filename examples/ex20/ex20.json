@@ -11,5 +11,12 @@
             "var" : "FLOW_OUT.rch",
             "units": "1:3"
         }
+    },
+    "scheduler": {
+        "slurm": {
+            "account": "nesi99999",
+            "mem": "500MB",
+            "time": "01:00:00"
+        }
     }
 }
