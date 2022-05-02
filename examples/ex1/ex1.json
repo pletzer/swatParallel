@@ -1,7 +1,7 @@
 {
     "run_dir": "./run/ex1",
     "project_dir": "../TxtInOut_Ruataniwha_test",
-    "swat_exec": "../SWAT/build/src/swat2012.682.gfort.rel",
+    "swat_exec": "../SWAT/build_intel/src/swat2012.682.ifort.rel",
     "sim": {
         "n_samples": 10,
         "n_workers": 1,
