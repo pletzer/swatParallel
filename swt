@@ -62,8 +62,9 @@ def prep(*, config: Path):
         raise RuntimeError("need to have a run directory")
 
     n_workers = meta['sim']['n_workers']
-    n_samples = meta['sim']['n_samples']
-
+    result = subprocess.run(["Rscript", "get_num_rows.R", meta['sim']['input']],
+                            capture_output=True, text=True)
+    n_samples = int(result.stdout)
     var_name, var_file = meta['sim']['output']['var'].split('.')
     units = meta['sim']['output']['units']
 
@@ -91,8 +92,7 @@ def prep(*, config: Path):
 
         # copy the executable over to the run directory
         print(f"...copying swat exec to {worker_run_path}")
-        shutil.copy(meta['swat_exec'], worker_run_path / Path('swat'))
-
+        shutil.copyfile(meta['swat_exec'], worker_run_path / Path('swat'))
 
         # build the script
         r_script = f"""
