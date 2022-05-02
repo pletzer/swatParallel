@@ -164,7 +164,7 @@ Rscript run.R
     with open(fname, 'w') as f:
             f.write(slurm_script)
 
-    print(f"You will need to submit SLURM script {fname} (sbatch {fname})")
+    print(f"Now run\nsbatch {fname}")
 
 
 def analyse(*, config: Path):
