@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import itertools
 import stat
+import glob
 
 
 
@@ -82,17 +83,20 @@ def prep(*, config: Path):
         shutil.copytree(meta['project_dir'], worker_run_path)
 
         # remove any executable file
-        print(f"...removing any executable file under {meta['run_dir']}")
-        remove_executables_in_dir(meta['run_dir'])
+        print(f"...removing any executable file under {worker_run_path}")
+        remove_executables_in_dir(worker_run_path)
 
         # copy the param input file
         input_rds = worker_run_path / Path('input.rds')
-        print(f"...copying the parameter table to {input_rds}")
+        print(f"...copying parameter table {meta['sim']['input']} to {input_rds}")
         shutil.copyfile(meta['sim']['input'], input_rds)
 
         # copy the executable over to the run directory
-        print(f"...copying swat exec to {worker_run_path}")
-        shutil.copyfile(meta['swat_exec'], worker_run_path / Path('swat'))
+        swat_exe = worker_run_path / Path('swat')
+        print(f"...copying {meta['swat_exec']} to {swat_exe}")
+        shutil.copyfile(meta['swat_exec'], swat_exe)
+        # make it executable
+        swat_exe.chmod(0o0766)
 
         # build the script
         r_script = f"""
@@ -164,7 +168,7 @@ Rscript run.R
     with open(fname, 'w') as f:
             f.write(slurm_script)
 
-    print(f"Now run\nsbatch {fname}")
+    print(f"Now execute\nsbatch {fname}")
 
 
 def analyse(*, config: Path):
