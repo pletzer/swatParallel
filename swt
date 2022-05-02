@@ -171,13 +171,23 @@ Rscript run.R
     print(f"Now execute\nsbatch {fname}")
 
 
-def analyse(*, config: Path):
+def merge(*, config: Path):
     """
     Analyse the results
     :param config: configuration file
     """
-    pass
+    # read the config file
+    with config.open('r') as f:
+        meta = json.load(f)
+
+    res = subprocess.run(["Rscript", "merge_params.R", meta['run_dir']],
+                        capture_output=True, text=True)
+    # check the output
+    if not "SUCCESS" in res.stdout:
+        raise RuntimeError(f"Failed to merge the RDS parameter files. Check that files {meta['run_dir']}/worker_*/result.rds exist")
+
+
 
 
 if __name__ == '__main__':
-    defopt.run([clean, prep, run, analyse])
+    defopt.run([clean, prep, run, merge])
