@@ -135,6 +135,11 @@ def run(*, config: Path):
     act = meta['scheduler']['slurm']['account']
     tim = meta['scheduler']['slurm']['time']
     mem = meta['scheduler']['slurm']['mem']
+    run_dir = meta['run_dir']
+    if not os.path.isabs(run_dir):
+        # relative path, make it absolute
+        run_dir = Path(os.getcwd()) / Path(run_dir)
+
     slurm_script = f"""#!/bin/bash -e
 #SBATCH --job-name=swt-{nworkers}w-{nthreads}t
 #SBATCH --account={act}       
@@ -151,7 +156,7 @@ ml Python R intel
 # prepending the worker_id with zeros
 worker_id=$(python -c "import sys; n = sys.argv[1]; print(n.zfill(4))" ${{SLURM_ARRAY_TASK_ID}})
 
-cd worker_${{worker_id}}
+cd {run_dir}/worker_${{worker_id}}
 Rscript run.R
 """
     fname = meta['run_dir'] / Path(f'run.sl')
