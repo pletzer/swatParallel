@@ -87,7 +87,12 @@ def prep(*, config: Path):
         # copy the param input file
         input_rds = worker_run_path / Path('input.rds')
         print(f"...copying the parameter table to {input_rds}")
-        shutil.copyfile(meta['sim']['input'], input_rds) 
+        shutil.copyfile(meta['sim']['input'], input_rds)
+
+        # copy the executable over to the run directory
+        print(f"...copying swat exec to {worker_run_path}")
+        shutil.copy(meta['swat_exec'], worker_run_path / Path('swat'))
+
 
         # build the script
         r_script = f"""
@@ -124,10 +129,6 @@ def run(*, config: Path):
     # read the config file
     with config.open('r') as f:
         meta = json.load(f)
-
-    # copy the executable over to the run directory
-    print(f"...copying swat exec")
-    shutil.copy(meta['swat_exec'], Path(meta['run_dir']) / Path('swat'))
 
     # create slurm job
     nworkers = meta['sim']['n_workers']
