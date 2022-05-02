@@ -21,12 +21,13 @@ def distribute_samples(n_samples, n_workers):
 
 def remove_executables_in_dir(directory):
     executable = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
-    for filename in os.listdir(directory):
-        if os.path.isfile(filename):
-            st = os.stat(filename)
+    for root, dirs, files in os.walk(directory):
+        for filename in files:
+            path = os.path.join(root, filename)
+            st = os.stat(path)
             mode = st.st_mode
             if mode & executable:
-                os.remove(filename)    
+                os.remove(path)
 
 
 def clean(*, config: Path):
@@ -38,6 +39,7 @@ def clean(*, config: Path):
     with config.open('r') as f:
         meta = json.load(f)
 
+    print(f"...removing {meta['run_dir']}")
     shutil.rmtree(Path(meta['run_dir']))
 
 
@@ -78,8 +80,13 @@ def prep(*, config: Path):
         print(f"...copying data from {meta['project_dir']} to {worker_run_path}")
         shutil.copytree(meta['project_dir'], worker_run_path)
 
+        # remove any executable file
+        print(f"...removing any executable file under {meta['run_dir']}")
+        remove_executables_in_dir(meta['run_dir'])
+
         # copy the param input file
         input_rds = worker_run_path / Path('input.rds')
+        print(f"...copying the parameter table to {input_rds}")
         shutil.copyfile(meta['sim']['input'], input_rds) 
 
         # build the script
@@ -118,16 +125,9 @@ def run(*, config: Path):
     with config.open('r') as f:
         meta = json.load(f)
 
-
-    # remove any executable file
-    print(f"removing execs")
-    remove_executables_in_dir(meta['run_dir'])
-    print(f"done")
-
     # copy the executable over to the run directory
-    print(f"copying swat exec")
+    print(f"...copying swat exec")
     shutil.copy(meta['swat_exec'], Path(meta['run_dir']) / Path('swat'))
-    print(f"done")
 
     # create slurm job
     nworkers = meta['sim']['n_workers']
