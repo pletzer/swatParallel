@@ -180,7 +180,7 @@ def merge(*, config: Path):
     with config.open('r') as f:
         meta = json.load(f)
 
-    res = subprocess.run(["Rscript", "merge_params.R", meta['run_dir']],
+    res = subprocess.run(["Rscript", "merge_partial_results.R", meta['run_dir']],
                         capture_output=True, text=True)
     # check the output
     if not "SUCCESS" in res.stdout:

@@ -50,27 +50,82 @@ remotes::install_github('chrisschuerz/SWATplusR')
 
 ## Key commands
 
+### Clean the run directory of an experiment
+
+```
+./swt clean -c <exp.json>
+```
+This will deletethe run directory for this experiment.
+
+
 ### Prepare an experiment
 
 ```
 ./swt prep -c <exp.json>
 ```
+This will create the run directory structure and create the run scripts.
 
 ### Run the experiment
 
 ```
 ./swt run -c <exp.json>
 ```
+This will generate the SLURM script to launch the tasks.
 
-### Analyse the experiment
+### Merge the experiment
+
+Each worker will run multiple iterations of the SWAT code over different parameter scans. This command merges all the results into one file.
 ```
-./swt analyse -c <exp.json>
+./swt merge -c <exp.json>
 ```
 
 ## Configuration file
 
+An example of a configuration file is
+```json
+{
+    "run_dir": "./run/ex4",
+    "project_dir": "../TxtInOut_Ruataniwha_test",
+    "swat_exec": "../SWAT/build_intel/src/swat2012.682.ifort.rel",
+    "sim": {
+        "n_workers": 4,
+        "n_threads_per_worker": 8,
+        "input": "examples/ex4/ex4.rds",
+        "output": {
+            "var" : "FLOW_OUT.rch",
+            "units": "1:3"
+        }
+    },
+    "scheduler": {
+        "slurm": {
+            "account": "nesi99999",
+            "mem": "2500MB",
+            "time": "00:20:00"
+        }
+    }
+}
+```
+Note the number of workers and the number of threads per worker. The input parameters are set in the `examples/ex4/ex4.rds` file.
+
+## The input file
+
+The input file holds a `tibble` object, which sets the parameter values to change across simulations. In the following, parameters `CN2.mgt` and `ALPHA_BF.gw` are given 10 different values. The column names are important, refer to the SWATPlusR documentation for more information.
+
+```
+   CN2.mgt | change = abschg ALPHA_BF.gw | change = absval
+1                  7.7217022                    0.95766123
+2                -10.5225200                    0.26965267
+3                  8.6272708                    0.13610409
+4                 -4.5344573                    0.18614407
+5                 -1.8126788                    0.28370613
+6                  0.6298365                    0.47322254
+7                 -0.8084397                    0.49547058
+8                 -6.3299731                    0.29937163
+9                -10.8317385                    0.04124022
+10                -5.5446769                    0.27589847
+```
+These 10 rows are then split across the workers.
 
 
-## Example
 
 
