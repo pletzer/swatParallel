@@ -55,7 +55,7 @@ remotes::install_github('chrisschuerz/SWATplusR')
 ```
 ./swt clean -c <exp.json>
 ```
-This will deletethe run directory for this experiment.
+This will delete the run directory for this experiment.
 
 
 ### Prepare an experiment
