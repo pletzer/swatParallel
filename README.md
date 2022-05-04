@@ -105,7 +105,7 @@ An example of a configuration file is
     }
 }
 ```
-Note the number of workers and the number of threads per worker. The input parameters are set in the `examples/ex4/ex4.rds` file.
+Note the number of workers and the number of threads per worker. The input parameters are set, here, in the `examples/ex4/ex4.rds` file.
 
 ## The input file
 
