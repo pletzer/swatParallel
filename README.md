@@ -50,6 +50,11 @@ remotes::install_github('chrisschuerz/SWATplusR')
 
 ## Key commands
 
+All `swt` commands are to be executed in the swatParallel directory
+```
+cd swatParallel
+```
+
 ### Clean the run directory of an experiment
 
 ```
