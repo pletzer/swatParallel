@@ -1,15 +1,18 @@
 # swatParallel
+
 A collection of scripts to run SWAT model parameter scans
 
 ## Prerequisites
 
 You'll need:
+ 1. A Fortran compiler
  1. CMake
  1. [SWAT](https://github.com/WatershedModels/SWAT.git)
- 2. R with [SWATplusR](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html)
+ 1. R with [SWATplusR](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html) installed
+ 1. Python 3.8 or later
 
 
-### Building SWAT 
+### How to compile the Fortran SWAT code
 
 On Unix/Linux/Mac OSX:
 ```
@@ -40,7 +43,7 @@ FC=ifx cmake -G "NMake Makefiles" ..
 cmake --build .
 ```
 
-### Installing SWATPlusR
+### How to install the SWATPlusR package
 
 In R:
 ```R
