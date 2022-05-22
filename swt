@@ -40,8 +40,13 @@ def clean(*, config: Path):
     with config.open('r') as f:
         meta = json.load(f)
 
-    print(f"...removing {meta['run_dir']}")
-    shutil.rmtree(Path(meta['run_dir']))
+    
+    run_dir = Path(meta['run_dir'])
+    if run_dir.is_dir():
+        print(f"...removing {run_dir}")
+        shutil.rmtree(run_dir)
+    else:
+        print(f"...{run_dir} does not exist. You're good to go.")
 
 
 

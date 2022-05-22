@@ -103,6 +103,7 @@ Most commands take command line argument `-c <exp.json>` where `exp.json>` is a 
 ### Clean the run directory of an experiment
 
 
+If you want to start from a clean state,
 ```
 ./swt clean -c <exp.json>
 ```
