@@ -51,7 +51,7 @@ install.packages('remotes')
 remotes::install_github('chrisschuerz/SWATplusR')
 ```
 
-## Key commands
+## Key commands to prepare, execute, submit and merge experiment results
 
 Go to the `swatParallel` directory
 ```
