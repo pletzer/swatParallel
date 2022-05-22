@@ -58,7 +58,50 @@ Go to the `swatParallel` directory
 cd swatParallel
 ```
 
+On mahuika, you'll wand the `R` and `Python` modules to be loaded
+```
+module load R Python
+```
+
+Type
+```
+./swt -h
+usage: swt [-h] {clean,prep,run,merge} ...
+
+positional arguments:
+  {clean,prep,run,merge}
+    clean               Clean the experiment
+                        :param config: JSON configuration file
+    prep                Prepare
+                        :param config: JSON configuration file
+    run                 Run
+                        :param config: configuration file
+    merge               Analyse the results
+                        :param config: configuration file
+
+optional arguments:
+  -h, --help            show this help message and exit
+```
+for a list of commands.
+
+Additional help can be obtained by typing `./swt <command> -h`. For instance:
+```
+./swt prep -h
+usage: swt prep [-h] -c CONFIG
+
+Prepare
+:param config: JSON configuration file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c CONFIG, --config CONFIG
+
+```
+
+Most commands take command line argument `-c <exp.json>` where `exp.json>` is a configuration file in JSON format. Directory `examples/*` contains a number of example configuration files. [Click here to see an example of JSON configuration file](#configuration-file-format)
+
 ### Clean the run directory of an experiment
+
 
 ```
 ./swt clean -c <exp.json>
@@ -87,7 +130,7 @@ Each worker will run multiple iterations of the SWAT code over different paramet
 ./swt merge -c <exp.json>
 ```
 
-## Configuration file
+## Configuration file format
 
 An example of a configuration file is
 ```json
