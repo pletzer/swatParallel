@@ -88,15 +88,17 @@ for a list of commands.
 Additional help can be obtained by typing `./swt <command> -h`. For instance:
 ```
 ./swt prep -h
-usage: swt prep [-h] -c CONFIG
+usage: swt prep [-h] -c CONFIG [-n NUM_PROCS]
 
 Prepare
 :param config: JSON configuration file
+:param num_procs: number of parallel processes
 
 optional arguments:
   -h, --help            show this help message and exit
   -c CONFIG, --config CONFIG
-
+  -n NUM_PROCS, --num-procs NUM_PROCS
+                        (default: 1)
 ```
 
 Most commands take command line argument `-c <exp.json>` where `exp.json>` is a configuration file in JSON format. Directory `examples/*` contains a number of example configuration files. [Click here to see an example of JSON configuration file](#configuration-file-format)
@@ -117,6 +119,12 @@ This will delete the run directory for this experiment.
 ./swt prep -c <exp.json>
 ```
 This will create the run directory structure and create the run scripts.
+
+Note: copying the files can be slow. You can accelerate this step by passing the `-n <num_procs>`. On mahuika, you can submit a job like so:
+```
+srun --ntasks=1 --cpus-per-task=20 ./swt prep -c examples/ex20/ex20.json -n 20
+```
+(for instance).
 
 ### Run the experiment
 
