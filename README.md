@@ -135,6 +135,20 @@ This will generate the SLURM script to launch the tasks. To submit the script, t
 ```
 sbatch run/<exp>/run.sl
 ```
+Typically, `run.sl` will submit an array of jobs. You can track the execution of the jobs with
+```
+squeue --me
+```
+and you will see something like
+```
+squeue --me
+JOBID         USER     ACCOUNT   NAME        CPUS MIN_MEM PARTITI START_TIME     TIME_LEFT STATE    NODELIST(REASON)    
+27110315      pletzera nesi99999 python         2    512M large   May 22 21:40     1:03:12 RUNNING  wbn234              
+27114447_0    pletzera nesi99999 swt-20w-8t    16    500M large   May 23 01:34       57:18 RUNNING  wbn234              
+27114447_1    pletzera nesi99999 swt-20w-8t    16    500M large   May 23 01:34       57:18 RUNNING  wbn185              
+27114447_2    pletzera nesi99999 swt-20w-8t    16    500M large   May 23 01:34       57:18 RUNNING  wbn185              
+27114447_3    pletzera nesi99999 swt-20w-8t    16    500M large   May 23 01:34       57:18 RUNNING  wbn216              
+```
 
 ### Merge the experiment
 
