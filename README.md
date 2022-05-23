@@ -131,7 +131,10 @@ srun --ntasks=1 --cpus-per-task=8 ./swt prep -c examples/ex20/ex20.json -n 8
 ```
 ./swt run -c <exp.json>
 ```
-This will generate the SLURM script to launch the tasks.
+This will generate the SLURM script to launch the tasks. To submit the script, type
+```
+sbatch run/<exp>/run.sl
+```
 
 ### Merge the experiment
 
