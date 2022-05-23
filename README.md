@@ -87,15 +87,17 @@ for a list of commands.
 Additional help can be obtained by typing `./swt <command> -h`. For instance:
 ```
 ./swt prep -h
-usage: swt prep [-h] -c CONFIG
+usage: swt prep [-h] -c CONFIG [-n NUM_PROCS]
 
 Prepare
 :param config: JSON configuration file
+:param num_procs: number of parallel processes
 
 optional arguments:
   -h, --help            show this help message and exit
   -c CONFIG, --config CONFIG
-
+  -n NUM_PROCS, --num-procs NUM_PROCS
+                        (default: 1)
 ```
 
 Most commands take command line argument `-c <exp.json>` where `exp.json>` is a configuration file in JSON format. Directory `examples/*` contains a number of example configuration files. [Click here to see an example of JSON configuration file](#configuration-file-format)
