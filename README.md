@@ -162,6 +162,7 @@ Each worker will run multiple iterations of the SWAT code over different paramet
 ```
 ./swt merge -c <exp.json>
 ```
+The file will be saved as `run/<exp>/results.rds`.
 
 ## Configuration file format
 
