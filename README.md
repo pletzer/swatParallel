@@ -162,11 +162,59 @@ sacct -j <jobid>
 
 ### Merge the experiment
 
-Each worker will run multiple iterations of the SWAT code over different parameter scans. This command merges all the results into one file.
+Each worker will run multiple iterations of the SWAT code over different parameter scans. This command merges all the results into `parameter.rds` and `simulation.rds` files under the run directory specified in the configuration file.
 ```
 ./swt merge -c <exp.json>
 ```
-The results will be saved in files `run/<exp>/parameter.rds` and `run/<exp>/simulation.rds`.
+
+You can read the results in R using:
+```R
+param <- readRDS("run/ex20/parameter.rds")
+simul <- readRDS("run/ex20/simulation.rds")
+```
+
+An example of parameter values is:
+```R
+param
+# A tibble: 100 × 2
+       CN2 ALPHA_BF
+     <dbl>    <dbl>
+ 1   9.63    0.941 
+ 2 -11.2     0.329 
+ 3 -11.8     0.0926
+ 4  -3.25    0.445 
+ 5  -7.36    0.383 
+ 6 -10.6     0.945 
+ 7   0.917   0.133 
+ 8 -10.3     0.321 
+ 9 -14.2     0.893 
+10  -2.70    0.802 
+# … with 90 more rows
+```
+
+An example of simulation data is:
+```R
+names(simul)
+[1] "q_1" "q_2" "q_3"
+colnames(simul$q_2)
+  [1] "date"    "run_1"   "run_2"   "run_3"   "run_4"   "run_5"   "run_6"  
+  [8] "run_7"   "run_8"   "run_9"   "run_10"  "run_11"  "run_12"  "run_13" 
+ [15] "run_14"  "run_15"  "run_16"  "run_17"  "run_18"  "run_19"  "run_20" 
+ [22] "run_21"  "run_22"  "run_23"  "run_24"  "run_25"  "run_26"  "run_27" 
+ [29] "run_28"  "run_29"  "run_30"  "run_31"  "run_32"  "run_33"  "run_34" 
+ [36] "run_35"  "run_36"  "run_37"  "run_38"  "run_39"  "run_40"  "run_41" 
+ [43] "run_42"  "run_43"  "run_44"  "run_45"  "run_46"  "run_47"  "run_48" 
+ [50] "run_49"  "run_50"  "run_51"  "run_52"  "run_53"  "run_54"  "run_55" 
+ [57] "run_56"  "run_57"  "run_58"  "run_59"  "run_60"  "run_61"  "run_62" 
+ [64] "run_63"  "run_64"  "run_65"  "run_66"  "run_67"  "run_68"  "run_69" 
+ [71] "run_70"  "run_71"  "run_72"  "run_73"  "run_74"  "run_75"  "run_76" 
+ [78] "run_77"  "run_78"  "run_79"  "run_80"  "run_81"  "run_82"  "run_83" 
+ [85] "run_84"  "run_85"  "run_86"  "run_87"  "run_88"  "run_89"  "run_90" 
+ [92] "run_91"  "run_92"  "run_93"  "run_94"  "run_95"  "run_96"  "run_97" 
+ [99] "run_98"  "run_99"  "run_100"
+
+```
+
 
 ## Configuration file format
 
