@@ -119,6 +119,12 @@ This will delete the run directory for this experiment.
 ```
 This will create the run directory structure and create the run scripts.
 
+Note: copying the files can be slow. You can accelerate this step by passing the `-n <num_procs>`. On mahuika, you can submit a job like so:
+```
+srun --ntasks=1 --cpus-per-task=20 ./swt prep -c examples/ex20/ex20.json -n 20
+```
+(for instance).
+
 ### Run the experiment
 
 ```
