@@ -122,9 +122,9 @@ This will create the run directory structure and create the run scripts.
 
 Note: copying the files can be slow. You can accelerate this step by passing the `-n <num_procs>`. On mahuika, you can submit a job like so:
 ```
-srun --ntasks=1 --cpus-per-task=20 ./swt prep -c examples/ex20/ex20.json -n 20
+srun --ntasks=1 --cpus-per-task=8 ./swt prep -c examples/ex20/ex20.json -n 8
 ```
-(for instance).
+(for instance). In the above, we're using 8 processes from a single node to create the 20 directories.
 
 ### Run the experiment
 
