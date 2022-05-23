@@ -15,7 +15,7 @@
     "scheduler": {
         "slurm": {
             "account": "nesi99999",
-            "mem": "500MB",
+            "mem": "8000MB",
             "time": "01:00:00"
         }
     }
