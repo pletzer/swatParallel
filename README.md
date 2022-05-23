@@ -60,7 +60,8 @@ cd swatParallel
 
 On mahuika, you'll wand the `R` and `Python` modules to be loaded
 ```
-module load R Python
+module load R Python intel
+pip install defopt --user
 ```
 
 Type
@@ -121,16 +122,39 @@ This will create the run directory structure and create the run scripts.
 
 Note: copying the files can be slow. You can accelerate this step by passing the `-n <num_procs>`. On mahuika, you can submit a job like so:
 ```
-srun --ntasks=1 --cpus-per-task=20 ./swt prep -c examples/ex20/ex20.json -n 20
+srun --ntasks=1 --cpus-per-task=8 ./swt prep -c examples/ex20/ex20.json -n 8
 ```
-(for instance).
+(for instance). In the above, we're using 8 processes from a single node to create the 20 directories.
 
 ### Run the experiment
 
 ```
 ./swt run -c <exp.json>
 ```
-This will generate the SLURM script to launch the tasks.
+This will generate the SLURM script to launch the tasks. To submit the script, type
+```
+sbatch run/<exp>/run.sl
+```
+Typically, `run.sl` will submit an array of jobs. You can track the execution of the jobs with
+```
+squeue --me
+```
+and you will see something like
+```
+squeue --me
+JOBID         USER     ACCOUNT   NAME        CPUS MIN_MEM PARTITI START_TIME     TIME_LEFT STATE    NODELIST(REASON)    
+27110315      pletzera nesi99999 python         2    512M large   May 22 21:40     1:03:12 RUNNING  wbn234              
+27114447_0    pletzera nesi99999 swt-20w-8t    16    500M large   May 23 01:34       57:18 RUNNING  wbn234              
+27114447_1    pletzera nesi99999 swt-20w-8t    16    500M large   May 23 01:34       57:18 RUNNING  wbn185              
+27114447_2    pletzera nesi99999 swt-20w-8t    16    500M large   May 23 01:34       57:18 RUNNING  wbn185              
+27114447_3    pletzera nesi99999 swt-20w-8t    16    500M large   May 23 01:34       57:18 RUNNING  wbn216              
+```
+Each job will generate a file `slurm-<jobid>_<workerid>.out`. It's good to inspect these files to check that the execution was successful. You can also check that the execution was successful with
+```
+sacct -j <jobid>
+```
+(Here, `<jobid>` would be 27114447.)
+
 
 ### Merge the experiment
 
@@ -138,6 +162,7 @@ Each worker will run multiple iterations of the SWAT code over different paramet
 ```
 ./swt merge -c <exp.json>
 ```
+The file will be saved as `run/<exp>/results.rds`.
 
 ## Configuration file format
 
