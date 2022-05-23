@@ -9,7 +9,7 @@ You'll need:
  1. CMake
  1. [SWAT](https://github.com/WatershedModels/SWAT.git)
  1. R with [SWATplusR](https://chrisschuerz.github.io/SWATplusR/articles/SWATplusR.html) installed
- 1. Python 3.8 or later
+ 1. Python 3.8 or later, with package `defopt` installed
 
 
 ### How to compile the Fortran SWAT code
@@ -58,11 +58,15 @@ Go to the `swatParallel` directory
 cd swatParallel
 ```
 
-On mahuika, you'll wand the `R` and `Python` modules to be loaded
+On mahuika, you'll want the `R` and `Python` modules to be loaded
 ```
-module load R Python intel
+source swt_mahuika.sh
+```
+You'll also need to install `defopt`,
+```
 pip install defopt --user
 ```
+
 
 Type
 ```
@@ -162,7 +166,7 @@ Each worker will run multiple iterations of the SWAT code over different paramet
 ```
 ./swt merge -c <exp.json>
 ```
-The file will be saved as `run/<exp>/results.rds`.
+The results will be saved in files `run/<exp>/parameter.rds` and `run/<exp>/simulation.rds`.
 
 ## Configuration file format
 

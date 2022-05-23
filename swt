@@ -201,11 +201,17 @@ def merge(*, config: Path):
     with config.open('r') as f:
         meta = json.load(f)
 
-    res = subprocess.run(["Rscript", "merge_partial_results.R", meta['run_dir']],
+    run_dir = meta['run_dir']
+    res = subprocess.run(["Rscript", "merge_partial_results.R", run_dir],
                         capture_output=True, text=True)
     # check the output
     if not "SUCCESS" in res.stdout:
-        raise RuntimeError(f"Failed to merge the RDS parameter files. Check that files {meta['run_dir']}/worker_*/result.rds exist")
+        print('stdout:')
+        print(res.stdout)
+        print('stderr:')
+        print(res.stderr)
+        raise RuntimeError(f"Failed to merge the RDS parameter files. Check that files {run_dir}/worker_*/result.rds exist")
+
 
 
 
