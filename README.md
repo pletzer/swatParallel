@@ -60,7 +60,8 @@ cd swatParallel
 
 On mahuika, you'll wand the `R` and `Python` modules to be loaded
 ```
-module load R Python
+module load R Python intel
+pip install defopt --user
 ```
 
 Type
