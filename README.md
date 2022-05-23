@@ -149,7 +149,11 @@ JOBID         USER     ACCOUNT   NAME        CPUS MIN_MEM PARTITI START_TIME    
 27114447_2    pletzera nesi99999 swt-20w-8t    16    500M large   May 23 01:34       57:18 RUNNING  wbn185              
 27114447_3    pletzera nesi99999 swt-20w-8t    16    500M large   May 23 01:34       57:18 RUNNING  wbn216              
 ```
-Each job will generate a file `slurm-<jobid>_<workerid>.out`. It's good to inspect these files to check that the execution was successful.
+Each job will generate a file `slurm-<jobid>_<workerid>.out`. It's good to inspect these files to check that the execution was successful. You can also check that the execution was successful with
+```
+sacct -j <jobid>
+```
+(Here, `<jobid>` would be 27114447.)
 
 
 ### Merge the experiment
