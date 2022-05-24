@@ -169,9 +169,10 @@ Each worker will run multiple iterations of the SWAT code over different paramet
 
 You can read the results in R using:
 ```R
-param <- readRDS("run/ex20/parameter.rds")
-simul <- readRDS("run/ex20/simulation.rds")
+param <- readRDS("<run_dir>/parameter.rds")
+simul <- readRDS("<run_dir>/simulation.rds")
 ```
+where `<run_dir>` is run directory defined in the `<exp.json>` file. 
 
 An example of parameter values is:
 ```R
@@ -212,8 +213,8 @@ colnames(simul$q_2)
  [85] "run_84"  "run_85"  "run_86"  "run_87"  "run_88"  "run_89"  "run_90" 
  [92] "run_91"  "run_92"  "run_93"  "run_94"  "run_95"  "run_96"  "run_97" 
  [99] "run_98"  "run_99"  "run_100"
-
 ```
+The rows are the dates and the columns are the simulation results for each of the parameter values in `parameter.rds`. 
 
 
 ## Configuration file format
