@@ -211,6 +211,7 @@ def merge(*, config: Path):
         print('stderr:')
         print(res.stderr)
         raise RuntimeError(f"Failed to merge the RDS parameter files. Check that files {run_dir}/worker_*/result.rds exist")
+    print(res.stdout)
 
 
 

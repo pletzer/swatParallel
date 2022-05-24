@@ -51,11 +51,11 @@ for (output_field_name in output_field_names) {
 
 # save the results to file
 parameter_file <- sprintf("%s/parameter.rds", run_dir)
-print(sprintf("...writing parameter values to %s\n", parameter_file))
+print(sprintf("...writing parameter values to %s", parameter_file))
 saveRDS(parameter, file = parameter_file)
 
 simulation_file <- sprintf("%s/simulation.rds", run_dir)
-print(sprintf("...writing simulation values to %s\n", simulation_file))
+print(sprintf("...writing simulation values to %s", simulation_file))
 saveRDS(simulation, file = simulation_file)
 
 print("SUCCESS")
