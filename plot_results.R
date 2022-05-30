@@ -19,7 +19,7 @@ simulation_file <- args[1]
 sim_data <- readRDS(simulation_file)
 
 file_name <- "q.pdf"
-pdf(file = file_name)
+pdf(file = file_name, width = 10, height = 8)
 for (i in 1:nq) {
 	field_name <- sprintf("q_%d", i)
 	data <- sim_data[[field_name]]
