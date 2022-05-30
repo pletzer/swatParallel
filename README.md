@@ -70,18 +70,20 @@ pip install defopt --user
 
 Type
 ```
-./swt -h
-usage: swt [-h] {clean,prep,run,merge} ...
+usage: swt [-h] {clean,prep,run,merge,plot} ...
 
 positional arguments:
-  {clean,prep,run,merge}
+  {clean,prep,run,merge,plot}
     clean               Clean the experiment
                         :param config: JSON configuration file
     prep                Prepare
                         :param config: JSON configuration file
+                        :param num_procs: number of parallel processes
     run                 Run
                         :param config: configuration file
     merge               Analyse the results
+                        :param config: configuration file
+    plot                Plot the results
                         :param config: configuration file
 
 optional arguments:

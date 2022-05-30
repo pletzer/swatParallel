@@ -1,8 +1,7 @@
 library(dplyr)
 library(ggplot2)
 library(tidyr)
-library(gridExtra)
-library(lattice)
+library(stringr)
 
 args <- commandArgs(trailingOnly=TRUE)
 nq <- length(args) - 1
@@ -18,7 +17,7 @@ simulation_file <- args[1]
 
 sim_data <- readRDS(simulation_file)
 
-file_name <- "q.pdf"
+file_name <- str_replace(simulation_file, ".rds", ".pdf")
 pdf(file = file_name, width = 10, height = 8)
 for (i in 1:nq) {
 	field_name <- sprintf("q_%d", i)
@@ -31,5 +30,6 @@ for (i in 1:nq) {
 }
 dev.off()
 print(sprintf("File %s was saved", file_name))
+print("SUCCESS")
 
 
