@@ -70,18 +70,20 @@ pip install defopt --user
 
 Type
 ```
-./swt -h
-usage: swt [-h] {clean,prep,run,merge} ...
+usage: swt [-h] {clean,prep,run,merge,plot} ...
 
 positional arguments:
-  {clean,prep,run,merge}
+  {clean,prep,run,merge,plot}
     clean               Clean the experiment
                         :param config: JSON configuration file
     prep                Prepare
                         :param config: JSON configuration file
+                        :param num_procs: number of parallel processes
     run                 Run
                         :param config: configuration file
     merge               Analyse the results
+                        :param config: configuration file
+    plot                Plot the results
                         :param config: configuration file
 
 optional arguments:
@@ -215,6 +217,16 @@ colnames(simul$q_2)
  [99] "run_98"  "run_99"  "run_100"
 ```
 The rows are the dates and the columns are the simulation results for each of the parameter values in `parameter.rds`. 
+
+### Generate plots of the experiment
+
+Once the results are merged you can plot the results with
+```
+./swt plot -c <exp.json>
+```
+This will generate <run_dir>/simulation.pdf.
+
+![alt Example of a simulation plot](https://github.com/pletzer/swatParallel/blob/main/swatParallel/figures/simulation.png)
 
 
 ## Configuration file format
