@@ -218,6 +218,16 @@ colnames(simul$q_2)
 ```
 The rows are the dates and the columns are the simulation results for each of the parameter values in `parameter.rds`. 
 
+### Generate plots of the experiment
+
+Once the results are merged you can plot the results with
+```
+./swt plot -c <exp.json>
+```
+This will generate <run_dir>/simulation.pdf.
+
+![alt Example of a simulation plot](https://github.com/pletzer/swatParallel/blob/main/swatParallel/figures/simulation.png)
+
 
 ## Configuration file format
 
