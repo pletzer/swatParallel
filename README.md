@@ -226,7 +226,7 @@ Once the results are merged you can plot the results with
 ```
 This will generate <run_dir>/simulation.pdf.
 
-![alt Example of a simulation plot](https://github.com/pletzer/swatParallel/blob/main/swatParallel/figures/simulation.png)
+![alt Example of a simulation plot](https://github.com/pletzer/swatParallel/blob/main/figures/simulation-0.png)
 
 
 ## Configuration file format
