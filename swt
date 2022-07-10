@@ -148,7 +148,7 @@ def prep(*, config: Path, num_procs: int=1):
 
 def run(*, config: Path):
     """
-    Run
+    Create SLURM run script
     :param config: configuration file
     """
     # read the config file
