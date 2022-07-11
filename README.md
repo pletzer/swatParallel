@@ -79,7 +79,7 @@ positional arguments:
     prep                Prepare
                         :param config: JSON configuration file
                         :param num_procs: number of parallel processes
-    run                 Run
+    run                 Create SLURM run script
                         :param config: configuration file
     merge               Analyse the results
                         :param config: configuration file
