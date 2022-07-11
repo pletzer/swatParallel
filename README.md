@@ -145,7 +145,7 @@ This will generate the SLURM script to launch the tasks. To submit the script, t
 ```
 sbatch <run_dir>/run.sl
 ```
-Typically, `run.sl` will submit an array of jobs. You can track the execution of the jobs with
+where `<run_dir>` is defined in the JSON configuration file. Typically, `run.sl` will submit an array of jobs. You can track the execution of the jobs with
 ```
 squeue --me
 ```
