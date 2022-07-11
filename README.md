@@ -139,9 +139,9 @@ srun --ntasks=1 --cpus-per-task=8 ./swt prep -c examples/ex20/ex20.json -n 8
 ```
 This will generate the SLURM script to launch the tasks. To submit the script, type
 ```
-sbatch run/<exp>/run.sl
+sbatch <run_dir>/run.sl
 ```
-Typically, `run.sl` will submit an array of jobs. You can track the execution of the jobs with
+where `<run_dir>` is defined in the JSON configuration file. Typically, `run.sl` will submit an array of jobs. You can track the execution of the jobs with
 ```
 squeue --me
 ```
