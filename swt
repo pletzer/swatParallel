@@ -32,14 +32,21 @@ def remove_executables_in_dir(directory):
             if mode & executable:
                 os.remove(path)
 
-def prepare_run_dir(worker_id, config):
+def prepare_run_dir(worker_id: int, config: Path):
+    """
+    Prepare the run directoryy
+    :param worker_id: worker Id
+    :param config: JSON configuration file 
+    """
 
     pid = multiprocessing.current_process()
 
-    # read the config file
+    # read the config file to extract the metadata
     with config.open('r') as f:
         meta = json.load(f)
 
+    # convert the integer Id to a string, prepending up to 4 zeros
+    # this gives us a maximum number of 10,000 workers
     worker_id_str = str(worker_id).zfill(4)
     worker_run_path = Path(meta['run_dir']) / Path(f'worker_{worker_id_str}')
 
@@ -56,25 +63,29 @@ def prepare_run_dir(worker_id, config):
     print(f"...[{pid}] copying parameter table {meta['sim']['input']} to {input_rds}")
     shutil.copyfile(meta['sim']['input'], input_rds)
 
-    # copy the executable over to the run directory
+    # copy the executable over to the run directory. SWATPlusR wants the executable to 
+    # be in this directory
     swat_exe = worker_run_path / Path('swat')
     print(f"...[{pid}] copying {meta['swat_exec']} to {swat_exe}")
     shutil.copyfile(meta['swat_exec'], swat_exe)
-    # make it executable
+    # make it executable (UNIX)
     swat_exe.chmod(0o0766)
 
     n_workers = meta['sim']['n_workers']
-    result = subprocess.run(["Rscript", "get_num_rows.R", meta['sim']['input']],
-                            capture_output=True, text=True)
-    n_samples = int(result.stdout)
     var_name, var_file = meta['sim']['output']['var'].split('.')
     units = meta['sim']['output']['units']
 
+    # extract the number of samples by running an R code, which reads the RDS input file
+    result = subprocess.run(["Rscript", "get_num_rows.R", meta['sim']['input']],
+                            capture_output=True, text=True)
+    n_samples = int(result.stdout)
+
+    # assign the samples to this processs
     n_local_samples = distribute_samples(n_samples, n_workers)
     indx_end_local = [e for e in itertools.accumulate(n_local_samples)]
     indx_beg_local = [indx_end_local[i] - n_local_samples[i] for i in range(len(n_local_samples))]
 
-    # build the script
+    # build the run.R script
     r_script = f"""
 library(SWATplusR)
 library(dplyr)
@@ -97,6 +108,7 @@ res <- run_swat2012(project_path = \'./\',
 # save the results
 saveRDS(res, file = \'./result.rds\')
 """
+    # write the run.R script
     with open(worker_run_path / Path(f'run.R'), 'w') as f:
         f.write(r_script)
 
@@ -125,7 +137,7 @@ def prep(*, config: Path, num_procs: int=1):
     """
     Prepare
     :param config: JSON configuration file
-    :param num_procs: number of parallel processes
+    :param num_procs: number of parallel processes used for copying input files
     """
     # read the config file
     with config.open('r') as f:
@@ -140,9 +152,9 @@ def prep(*, config: Path, num_procs: int=1):
         raise RuntimeError("need to have a run directory")
 
     n_workers = meta['sim']['n_workers']
-    prepare_run_dir_1 = functools.partial(prepare_run_dir, config=config)
+    prepare_run_dir_one = functools.partial(prepare_run_dir, config=config)
     with multiprocessing.Pool(num_procs) as pool:
-        pool.map(prepare_run_dir_1, range(n_workers))
+        pool.map(prepare_run_dir_one, range(n_workers))
 
 
 

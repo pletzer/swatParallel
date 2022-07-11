@@ -70,6 +70,7 @@ pip install defopt --user
 
 Type
 ```
+swt --help
 usage: swt [-h] {clean,prep,run,merge,plot} ...
 
 positional arguments:
@@ -79,7 +80,7 @@ positional arguments:
     prep                Prepare
                         :param config: JSON configuration file
                         :param num_procs: number of parallel processes
-    run                 Run
+    run                 Create SLURM run script
                         :param config: configuration file
     merge               Analyse the results
                         :param config: configuration file
@@ -91,30 +92,33 @@ optional arguments:
 ```
 for a list of commands.
 
-Additional help can be obtained by typing `./swt <command> -h`. For instance:
+Additional help can be obtained by typing `swt <command> -h`. For instance:
 ```
-./swt prep -h
+swt prep --help
 usage: swt prep [-h] -c CONFIG [-n NUM_PROCS]
 
 Prepare
 :param config: JSON configuration file
-:param num_procs: number of parallel processes
+:param num_procs: number of parallel processes used for copying input files
 
 optional arguments:
   -h, --help            show this help message and exit
   -c CONFIG, --config CONFIG
   -n NUM_PROCS, --num-procs NUM_PROCS
                         (default: 1)
-```
+ ```
 
-Most commands take command line argument `-c <exp.json>` where `exp.json>` is a configuration file in JSON format. Directory `examples/*` contains a number of example configuration files. [Click here to see an example of JSON configuration file](#configuration-file-format)
+All commands take command line argument `-c <exp.json>` where `exp.json>` is a configuration file in JSON format. Directory `examples/*` contains a number of example configuration files. [Click here to see an example of JSON configuration file](#configuration-file-format)
+
+Commands that can take a long time to complete also have the `--num-procs` option.
+
+Options have a long (e.g. `--help`) and a short form (e.g. `-h`).
 
 ### Clean the run directory of an experiment
 
-
 If you want to start from a clean state,
 ```
-./swt clean -c <exp.json>
+swt clean -c <exp.json>
 ```
 This will delete the run directory for this experiment.
 
@@ -122,24 +126,24 @@ This will delete the run directory for this experiment.
 ### Prepare an experiment
 
 ```
-./swt prep -c <exp.json>
+swt prep -c <exp.json>
 ```
 This will create the run directory structure and create the run scripts.
 
 Note: copying the files can be slow. You can accelerate this step by passing the `-n <num_procs>`. On mahuika, you can submit a job like so:
 ```
-srun --ntasks=1 --cpus-per-task=8 ./swt prep -c examples/ex20/ex20.json -n 8
+srun --ntasks=1 --cpus-per-task=8 swt prep -c examples/ex20/ex20.json -n 8
 ```
-(for instance). In the above, we're using 8 processes from a single node to create the 20 directories.
+for instance, with the option `-n 8` matching the `--cpus-per-task=8` value passed to the SLURM scheduler. In the above, we're using 8 processes from a single node to create the 20 directories.
 
-### Run the experiment
+### Create the run script
 
 ```
-./swt run -c <exp.json>
+swt run -c <exp.json>
 ```
 This will generate the SLURM script to launch the tasks. To submit the script, type
 ```
-sbatch run/<exp>/run.sl
+sbatch <run_dir>/run.sl
 ```
 Typically, `run.sl` will submit an array of jobs. You can track the execution of the jobs with
 ```
@@ -159,15 +163,16 @@ Each job will generate a file `slurm-<jobid>_<workerid>.out`. It's good to inspe
 ```
 sacct -j <jobid>
 ```
-(Here, `<jobid>` would be 27114447.)
+(Here, `<jobid>` is 27114447.)
 
 
 ### Merge the experiment
 
-Each worker will run multiple iterations of the SWAT code over different parameter scans. This command merges all the results into `parameter.rds` and `simulation.rds` files under the run directory specified in the configuration file.
+Each worker will run multiple iterations of the SWAT code over different parameter scans. Once the SLURM job has sucessfully completed, 
 ```
-./swt merge -c <exp.json>
+swt merge -c <exp.json>
 ```
+will merge all the results into the `parameter.rds` and `simulation.rds` files under the run directory specified in the configuration file.
 
 You can read the results in R using:
 ```R
@@ -222,7 +227,7 @@ The rows are the dates and the columns are the simulation results for each of th
 
 Once the results are merged you can plot the results with
 ```
-./swt plot -c <exp.json>
+swt plot -c <exp.json>
 ```
 This will generate <run_dir>/simulation.pdf.
 
