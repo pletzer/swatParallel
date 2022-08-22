@@ -1,0 +1,22 @@
+{
+    "run_dir": "./run/ex20flang_broadwell",
+    "project_dir": "../TxtInOut_Ruataniwha_test",
+    "swat_exec": "../SWAT-pletzer/build_flang/src/swat2012.684.flang.rel",
+    "sim": {
+        "n_samples": 100,
+        "n_workers": 20,
+        "n_threads_per_worker": 8,
+        "input": "examples/ex20/ex20.rds",
+        "output": {
+            "var" : "FLOW_OUT.rch",
+            "units": "1:3"
+        }
+    },
+    "scheduler": {
+        "slurm": {
+            "account": "nesi99999",
+            "mem": "8000MB",
+            "time": "01:00:00"
+        }
+    }
+}
