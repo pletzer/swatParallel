@@ -1,0 +1,22 @@
+{
+    "run_dir": "./run/many_outputs",
+    "project_dir": "../TxtInOut_Ruataniwha_test",
+    "swat_exec": "../SWAT/build_intel/src/swat2012.682.ifort.rel",
+    "sim": {
+        "n_workers": 4,
+        "n_threads_per_worker": 8,
+        "input": "examples/many_outputs/many_outputs.rds",
+        "output": {
+            "vars" : ["FLOW_OUT.rch", "NO3_OUT.rch"],
+            "units": ["1:3", "1,2,3"],
+            "names": ["q", "no3_load"]
+        }
+    },
+    "scheduler": {
+        "slurm": {
+            "account": "nesi99999",
+            "mem": "2500MB",
+            "time": "00:20:00"
+        }
+    }
+}

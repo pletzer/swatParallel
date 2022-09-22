@@ -72,9 +72,6 @@ def prepare_run_dir(worker_id: int, config: Path):
     swat_exe.chmod(0o0766)
 
     n_workers = meta['sim']['n_workers']
-    var_name, var_file = meta['sim']['output']['var'].split('.')
-    units = meta['sim']['output']['units']
-
     # extract the number of samples by running an R code, which reads the RDS input file
     result = subprocess.run(["Rscript", "get_num_rows.R", meta['sim']['input']],
                             capture_output=True, text=True)
@@ -84,6 +81,13 @@ def prepare_run_dir(worker_id: int, config: Path):
     n_local_samples = distribute_samples(n_samples, n_workers)
     indx_end_local = [e for e in itertools.accumulate(n_local_samples)]
     indx_beg_local = [indx_end_local[i] - n_local_samples[i] for i in range(len(n_local_samples))]
+
+    vars = meta['sim']['output']['vars']
+    units = meta['sim']['output']['units']
+    names = meta['sim']['output']['names']
+
+    if not (len(vars) == len(units) == len(names)):
+        raise RuntimError(f"Lengths of vars ({len(vars)}), units ({len(units)}) and names ({len(names)}) in JSON file should match")
 
     # build the run.R script
     r_script = f"""
@@ -100,8 +104,19 @@ param <- readRDS('input.rds')[ibeg:iend,]
 
 # run the parameter scan
 res <- run_swat2012(project_path = \'./\',
-                output = list(q=define_output(file = \'{var_file}\',
-                          variable = \'{var_name}\', unit={units})),
+                output = list( \
+    """
+    for i in range(len(names)):
+        var = vars[i]
+        unit = units[i]
+        name = names[i]
+        var_name, var_file = var.split('.')
+
+        r_script += f"""
+                    {name} = define_output(file=\'{var_file}\', variable=\'{var_name}\', unit={unit}),
+        """
+
+    r_script += f"""
                 parameter = param,
                 n_thread = {meta['sim']['n_threads_per_worker']})
 
