@@ -103,22 +103,21 @@ iend <- {indx_end_local[worker_id]}
 param <- readRDS('input.rds')[ibeg:iend,]
 
 # run the parameter scan
-res <- run_swat2012(project_path = \'./\',
-                output = list( \
-    """
+res <- run_swat2012(project_path = \'./\', output = list(
+"""
     for i in range(len(names)):
         var = vars[i]
         unit = units[i]
         name = names[i]
         var_name, var_file = var.split('.')
-
-        r_script += f"""
-                    {name} = define_output(file=\'{var_file}\', variable=\'{var_name}\', unit={unit}),
-        """
-
-    r_script += f"""
-                parameter = param,
-                n_thread = {meta['sim']['n_threads_per_worker']})
+        r_script += f"            {name} = define_output(file=\'{var_file}\', variable=\'{var_name}\', unit={unit})"
+        if i < len(names) - 1:
+            r_script += ",\n"
+        else:
+            r_script += "\n"
+       
+    r_script += f"""                                                     ),
+                    parameter = param, n_thread = {meta['sim']['n_threads_per_worker']})
 
 # save the results
 saveRDS(res, file = \'./result.rds\')
