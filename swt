@@ -251,22 +251,22 @@ def plot(*, config: Path):
 
     run_dir = Path(meta['run_dir'])
     sim_file = run_dir / Path('simulation.rds')
-    units_beg, units_end = meta['sim']['output']['units'].split(':')
-    units_lst = [str(i) for i in range(int(units_beg), int(units_end) + 1)]
-    cmds = ["Rscript", "plot_results.R",  str(sim_file)] + units_lst
-    res = subprocess.run(cmds,
-                        capture_output=True, text=True)
-    # check the output
-    if not "SUCCESS" in res.stdout:
-        print('stdout:')
+    units = meta['sim']['output']['units']
+    names = meta['sim']['output']['names']
+    n = len(names)
+    for i in range(n):
+        unit_lst = units[i]
+        name = names[i]
+        cmd = ["Rscript", "plot_results.R",  str(sim_file), name, unit_lst]
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        # check the output
+        if not "SUCCESS" in res.stdout:
+            print('stdout:')
+            print(res.stdout)
+            print('stderr:')
+            print(res.stderr)
+            raise RuntimeError(f"Failed to plot the RDS simulation result. Check that file {run_dir}/simulation.rds exists")
         print(res.stdout)
-        print('stderr:')
-        print(res.stderr)
-        raise RuntimeError(f"Failed to plot the RDS simulation result. Check that file {run_dir}/simulation.rds exists")
-    print(res.stdout)
-
-
-
 
 if __name__ == '__main__':
     defopt.run([clean, prep, run, merge, plot])
