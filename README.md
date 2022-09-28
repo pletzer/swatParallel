@@ -62,6 +62,8 @@ On mahuika, you'll want the `R` and `Python` modules to be loaded
 ```
 source swt_mahuika.sh
 ```
+Note: the versions of the mahuika modules have been specified. Consider updating these versions over time. 
+
 You'll also need to install `defopt`,
 ```
 pip install defopt --user
@@ -145,7 +147,16 @@ This will generate the SLURM script to launch the tasks. To submit the script, t
 ```
 sbatch <run_dir>/run.sl
 ```
-where `<run_dir>` is defined in the JSON configuration file. Typically, `run.sl` will submit an array of jobs. You can track the execution of the jobs with
+where `<run_dir>` is defined in the JSON configuration file. 
+
+You can pass additional arguments to `sbatch`. For instance,
+```
+sbatch --partition=milan  <run_dir>/run.sl
+```
+to run on the Milan CPUs.
+
+
+Typically, `run.sl` will submit an array of jobs. You can track the execution of the jobs with
 ```
 squeue --me
 ```
@@ -229,7 +240,7 @@ Once the results are merged you can plot the results with
 ```
 swt plot -c <exp.json>
 ```
-This will generate <run_dir>/simulation.pdf.
+This will generate PDF files named <name>.pdf under <run_dir>, where <name> is the name of the output field (e.g. no3_load).
 
 ![alt Example of a simulation plot](https://github.com/pletzer/swatParallel/blob/main/figures/simulation-0.png)
 
@@ -247,8 +258,9 @@ An example of a configuration file is
         "n_threads_per_worker": 8,
         "input": "examples/ex4/ex4.rds",
         "output": {
-            "var" : "FLOW_OUT.rch",
-            "units": "1:3"
+            "vars" : ["FLOW_OUT.rch", "NO3_OUT.rch"],
+            "units": ["1:3", "c(1,2)"],
+            "names": ["q", "no3_load"],
         }
     },
     "scheduler": {

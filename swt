@@ -72,9 +72,6 @@ def prepare_run_dir(worker_id: int, config: Path):
     swat_exe.chmod(0o0766)
 
     n_workers = meta['sim']['n_workers']
-    var_name, var_file = meta['sim']['output']['var'].split('.')
-    units = meta['sim']['output']['units']
-
     # extract the number of samples by running an R code, which reads the RDS input file
     result = subprocess.run(["Rscript", "get_num_rows.R", meta['sim']['input']],
                             capture_output=True, text=True)
@@ -84,6 +81,13 @@ def prepare_run_dir(worker_id: int, config: Path):
     n_local_samples = distribute_samples(n_samples, n_workers)
     indx_end_local = [e for e in itertools.accumulate(n_local_samples)]
     indx_beg_local = [indx_end_local[i] - n_local_samples[i] for i in range(len(n_local_samples))]
+
+    vars = meta['sim']['output']['vars']
+    units = meta['sim']['output']['units']
+    names = meta['sim']['output']['names']
+
+    if not (len(vars) == len(units) == len(names)):
+        raise RuntimError(f"Lengths of vars ({len(vars)}), units ({len(units)}) and names ({len(names)}) in JSON file should match")
 
     # build the run.R script
     r_script = f"""
@@ -99,11 +103,21 @@ iend <- {indx_end_local[worker_id]}
 param <- readRDS('input.rds')[ibeg:iend,]
 
 # run the parameter scan
-res <- run_swat2012(project_path = \'./\',
-                output = list(q=define_output(file = \'{var_file}\',
-                          variable = \'{var_name}\', unit={units})),
-                parameter = param,
-                n_thread = {meta['sim']['n_threads_per_worker']})
+res <- run_swat2012(project_path = \'./\', output = list(
+"""
+    for i in range(len(names)):
+        var = vars[i]
+        unit = units[i]
+        name = names[i]
+        var_name, var_file = var.split('.')
+        r_script += f"            {name} = define_output(file=\'{var_file}\', variable=\'{var_name}\', unit={unit})"
+        if i < len(names) - 1:
+            r_script += ",\n"
+        else:
+            r_script += "\n"
+       
+    r_script += f"""                                                     ),
+                    parameter = param, n_thread = {meta['sim']['n_threads_per_worker']})
 
 # save the results
 saveRDS(res, file = \'./result.rds\')
@@ -189,7 +203,8 @@ def run(*, config: Path):
 #SBATCH --hint=nomultithread
 
 # on mahuika, need these modules
-ml Python R intel
+ml purge
+ml intel/2022a R/4.1.0-gimkl-2020a Python/3.8.2-gimkl-2020a
 
 # prepending the worker_id with zeros
 worker_id=$(python -c "import sys; n = sys.argv[1]; print(n.zfill(4))" ${{SLURM_ARRAY_TASK_ID}})
@@ -237,22 +252,22 @@ def plot(*, config: Path):
 
     run_dir = Path(meta['run_dir'])
     sim_file = run_dir / Path('simulation.rds')
-    units_beg, units_end = meta['sim']['output']['units'].split(':')
-    units_lst = [str(i) for i in range(int(units_beg), int(units_end) + 1)]
-    cmds = ["Rscript", "plot_results.R",  str(sim_file)] + units_lst
-    res = subprocess.run(cmds,
-                        capture_output=True, text=True)
-    # check the output
-    if not "SUCCESS" in res.stdout:
-        print('stdout:')
+    units = meta['sim']['output']['units']
+    names = meta['sim']['output']['names']
+    n = len(names)
+    for i in range(n):
+        unit_lst = units[i]
+        name = names[i]
+        cmd = ["Rscript", "plot_results.R",  str(sim_file), name, unit_lst]
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        # check the output
+        if not "SUCCESS" in res.stdout:
+            print('stdout:')
+            print(res.stdout)
+            print('stderr:')
+            print(res.stderr)
+            raise RuntimeError(f"Failed to plot the RDS simulation result. Check that file {run_dir}/simulation.rds exists")
         print(res.stdout)
-        print('stderr:')
-        print(res.stderr)
-        raise RuntimeError(f"Failed to plot the RDS simulation result. Check that file {run_dir}/simulation.rds exists")
-    print(res.stdout)
-
-
-
 
 if __name__ == '__main__':
     defopt.run([clean, prep, run, merge, plot])
