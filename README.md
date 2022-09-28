@@ -61,7 +61,7 @@ cd swatParallel
 On mahuika, you'll want the `R` and `Python` modules to be loaded
 ```
 source swt_mahuika.sh
-
+```
 Note: the versions of the mahuika modules have been specified. Consider updating these versions over time. 
 
 You'll also need to install `defopt`,
