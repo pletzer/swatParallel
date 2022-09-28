@@ -203,7 +203,8 @@ def run(*, config: Path):
 #SBATCH --hint=nomultithread
 
 # on mahuika, need these modules
-ml Python R intel
+ml purge
+ml intel/2022a R/4.1.0-gimkl-2020a Python/3.8.2-gimkl-2020a
 
 # prepending the worker_id with zeros
 worker_id=$(python -c "import sys; n = sys.argv[1]; print(n.zfill(4))" ${{SLURM_ARRAY_TASK_ID}})
