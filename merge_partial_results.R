@@ -9,7 +9,7 @@ worker_dirs <- Sys.glob(regex_path)
 
 result_path <- sprintf("%s/worker_0000/result.rds", run_dir)
 result <- readRDS(result_path)
-date <- result$simulation$q_1$date
+date <- result$simulation[[1]]$date
 output_field_names <- names(result$simulation)
 
 parameter_list <- list()
