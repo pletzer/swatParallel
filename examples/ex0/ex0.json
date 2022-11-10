@@ -1,0 +1,23 @@
+{
+    "run_dir": "./run/ex0",
+    "project_dir": "../TxtInOut_Ruataniwha_test",
+    "swat_exec": "../SWAT/build_intel/src/swat2012.682.ifort.rel",
+    "sim": {
+        "n_samples": 10,
+        "n_workers": 1,
+        "n_threads_per_worker": 1,
+        "input": "examples/ex0/ex0.rds",
+        "output": {
+            "vars" : ["FLOW_OUT.rch"],
+            "units": ["1:2"],
+            "names": ["q"]
+        }
+    },
+    "scheduler": {
+        "slurm": {
+            "account": "nesi99999",
+            "mem": "1000MB",
+            "time": "00:50:00"
+        }
+    }
+}
