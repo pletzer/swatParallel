@@ -1,0 +1,22 @@
+{
+    "run_dir": "./run/linh",
+    "project_dir": "../TxtInOut_Ruataniwha_test",
+    "swat_exec": "../SWAT/build_intel/src/swat2012.682.ifort.rel",
+    "sim": {
+        "n_workers": 4,
+        "n_threads_per_worker": 1,
+        "input": "examples/ex1/ex1.rds",
+        "output": {
+            "vars" : ["FLOW_OUT.rch", "NO3_OUT.rch"],
+            "units": ["2:4", "c(2,3,4)"],
+            "names": ["q", "no3_load"]
+        }
+    },
+    "scheduler": {
+        "slurm": {
+            "account": "niwa99999",
+            "mem": "2500MB",
+            "time": "00:20:00"
+        }
+    }
+}
